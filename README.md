@@ -115,23 +115,6 @@ Konversi nama lokasi ke koordinat
 }
 ```
 
-### `GET /`
-Info API dan endpoints yang tersedia
-
-## 🎨 Screenshots
-
-### Halaman Utama
-![Halaman Utama](screenshots/main.png)
-
-### Form Input
-![Form Input](screenshots/form.png)
-
-### Hasil Rencana
-![Hasil Rencana](screenshots/results.png)
-
-### Peta Interaktif
-![Peta Interaktif](screenshots/map.png)
-
 ## 🚀 Deployment
 
 ### Backend (FastAPI)
@@ -159,32 +142,8 @@ travel-planner-ai/
 └── README.md           # Dokumentasi
 ```
 
-### Menambahkan Fitur Baru
-1. Clone repository
-2. Buat branch baru: `git checkout -b feature-nama`
-3. Develop fitur
-4. Commit changes: `git commit -m "Add feature"`
-5. Push: `git push origin feature-nama`
-6. Buat Pull Request
-
-## 📝 Lisensi
-
-Proyek ini menggunakan lisensi MIT. Lihat file [LICENSE](LICENSE) untuk detail.
-
-## 🤝 Kontribusi
-
-Kontribusi sangat diterima! Silakan:
-1. Fork repository
-2. Buat feature branch
-3. Commit changes
-4. Push ke branch
-5. Buat Pull Request
-
-## 📞 Kontak & Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/travel-planner-ai/issues)
-- **Email**: your.email@example.com
-- **Discord**: Join server komunitas
+## Support Me
+[![Buy Me a Coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=agustridy&button_colour=FFDD00&font_colour=000000&font_family=Arial&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/agustridy)
 
 ## 🙏 Credits
 
