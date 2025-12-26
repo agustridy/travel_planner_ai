@@ -1,0 +1,198 @@
+# 🤖 Travel Planner AI - FastAPI + LLM + Maps
+
+Aplikasi web cerdas untuk merencanakan perjalanan wisata secara otomatis menggunakan kecerdasan buatan dan integrasi peta interaktif.
+
+## 🎯 Fitur Utama
+
+- **AI-Powered Recommendations**: Generate rencana perjalanan otomatis menggunakan Deepseek LLM
+- **Interactive Maps**: Visualisasi peta dengan Leaflet.js dan OpenStreetMap
+- **Smart Routing**: Rute optimal berdasarkan lokasi dan preferensi
+- **Budget Planning**: Rekomendasi sesuai budget (rendah, menengah, tinggi)
+- **Category Filtering**: Filter destinasi berdasarkan minat (sejarah, kuliner, alam, dll)
+- **Real-time Geocoding**: Konversi nama lokasi ke koordinat GPS
+- **Responsive Design**: Tampilan yang optimal di desktop dan mobile
+
+## 🛠️ Teknologi yang Digunakan
+
+### Backend
+- **FastAPI** - Framework web modern dan cepat
+- **Python 3.8+** - Bahasa pemrograman utama
+- **Deepseek API** - Model LLM untuk rekomendasi cerdas
+- **Pydantic** - Validasi data dan serialisasi
+- **httpx** - HTTP client async
+- **uvicorn** - ASGI server
+
+### Frontend
+- **HTML5/CSS3** - Struktur dan styling
+- **JavaScript (ES6+)** - Logika client-side
+- **Leaflet.js** - Library peta interaktif
+- **OpenStreetMap** - Tiles peta gratis
+
+## 📦 Instalasi
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/yourusername/travel-planner-ai.git
+cd travel-planner-ai
+```
+
+### 2. Setup Virtual Environment
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Linux/Mac
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install fastapi uvicorn pydantic anthropic httpx python-dotenv
+```
+
+### 4. Konfigurasi Environment Variables
+Buat file `.env` di root folder:
+```env
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+```
+
+### 5. Dapatkan API Key
+1. Daftar di [Deepseek Platform](https://platform.deepseek.com/)
+2. Buat API key baru
+3. Copy ke file `.env`
+
+## 🚀 Cara Menjalankan
+
+### Backend Server
+```bash
+python main.py
+```
+Server akan berjalan di `http://localhost:8080`
+
+### Frontend
+1. Buka file `frontend/index.html` di browser
+2. Atau gunakan live server extension di VS Code
+
+## 📖 Cara Penggunaan
+
+### 1. Input Preferensi
+- Masukkan **kota tujuan** (contoh: Yogyakarta, Bali, Jakarta)
+- Pilih **minat** (sejarah, kuliner, alam, belanja, religi, seni)
+- Tentukan **durasi** (1-14 hari)
+- Pilih **budget** (rendah, menengah, tinggi)
+
+### 2. Generate Rencana
+- Klik tombol **"Generate Rencana Perjalanan"**
+- Tunggu AI memproses (5-10 detik)
+
+### 3. Hasil yang Didapat
+- **Daftar destinasi** dengan deskripsi lengkap
+- **Peta interaktif** dengan marker dan rute
+- **Ringkasan perjalanan** (total waktu, jarak, budget)
+- **Tips praktis** untuk setiap destinasi
+
+## 🔧 API Endpoints
+
+### `POST /api/plan`
+Generate travel plan berdasarkan preferensi
+```json
+{
+  "city": "Yogyakarta",
+  "interests": ["sejarah", "kuliner"],
+  "duration": 3,
+  "budget": "menengah"
+}
+```
+
+### `GET /api/geocode?location={nama_lokasi}`
+Konversi nama lokasi ke koordinat
+```json
+{
+  "lat": -7.7956,
+  "lon": 110.3695
+}
+```
+
+### `GET /`
+Info API dan endpoints yang tersedia
+
+## 🎨 Screenshots
+
+### Halaman Utama
+![Halaman Utama](screenshots/main.png)
+
+### Form Input
+![Form Input](screenshots/form.png)
+
+### Hasil Rencana
+![Hasil Rencana](screenshots/results.png)
+
+### Peta Interaktif
+![Peta Interaktif](screenshots/map.png)
+
+## 🚀 Deployment
+
+### Backend (FastAPI)
+- **Railway**: `railway up`
+- **Render**: Deploy dari GitHub
+- **PythonAnywhere**: Upload file Python
+- **Docker**: Build image dan deploy ke cloud
+
+### Frontend (Static)
+- **GitHub Pages**: Gratis untuk static site
+- **Netlify**: Drag & drop deployment
+- **Vercel**: Optimized for frontend
+- **Cloudflare Pages**: Global CDN
+
+## 🔧 Development
+
+### Struktur Proyek
+```
+travel-planner-ai/
+├── main.py              # Backend FastAPI
+├── .env                 # Environment variables
+├── requirements.txt     # Python dependencies
+├── frontend/
+│   └── index.html      # Frontend HTML/CSS/JS
+└── README.md           # Dokumentasi
+```
+
+### Menambahkan Fitur Baru
+1. Clone repository
+2. Buat branch baru: `git checkout -b feature-nama`
+3. Develop fitur
+4. Commit changes: `git commit -m "Add feature"`
+5. Push: `git push origin feature-nama`
+6. Buat Pull Request
+
+## 📝 Lisensi
+
+Proyek ini menggunakan lisensi MIT. Lihat file [LICENSE](LICENSE) untuk detail.
+
+## 🤝 Kontribusi
+
+Kontribusi sangat diterima! Silakan:
+1. Fork repository
+2. Buat feature branch
+3. Commit changes
+4. Push ke branch
+5. Buat Pull Request
+
+## 📞 Kontak & Support
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/travel-planner-ai/issues)
+- **Email**: your.email@example.com
+- **Discord**: Join server komunitas
+
+## 🙏 Credits
+
+- **OpenStreetMap** untuk tiles peta gratis
+- **Deepseek** untuk API LLM yang affordable
+- **FastAPI** untuk framework backend yang powerful
+- **Leaflet.js** untuk library peta yang ringan
+
+---
+
+**⭐ Jika proyek ini membantu, jangan lupa beri star di GitHub!**

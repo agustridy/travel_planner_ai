@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Planner AI</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 150px);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .interests-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .interest-tag {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .interest-tag.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            margin-top: 15px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            animation: progressAnimation 2s ease-in-out infinite;
+        }
+
+        @keyframes progressAnimation {
+            0% {
+                width: 0%;
+                background-position: 0% 0%;
+            }
+            50% {
+                width: 70%;
+                background-position: 100% 0%;
+            }
+            100% {
+                width: 100%;
+                background-position: 0% 0%;
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #map {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            height: 100%;
+        }
+
+        .results {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .destination-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .destination-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .destination-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+            margin: 5px 0;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-right: 8px;
+        }
+
+        .summary-route {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .summary-route h4 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .summary-item strong {
+            font-weight: 600;
+        }
+
+        .summary-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .summary-category-tag {
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .leaflet-popup-content {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .popup-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .popup-description {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            #map {
+                height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Travel Planner AI</h1>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <h3 style="margin-bottom: 20px; color: #667eea;">Preferensi Perjalanan</h3>
+                
+                <div class="form-group">
+                    <label>Kota Tujuan</label>
+                    <input type="text" id="city" placeholder="Contoh: Yogyakarta" value="Yogyakarta">
+                </div>
+
+                <div class="form-group">
+                    <label>Minat & Preferensi</label>
+                    <div class="interests-group">
+                        <div class="interest-tag" data-interest="sejarah">🏛️ Sejarah</div>
+                        <div class="interest-tag" data-interest="kuliner">🍜 Kuliner</div>
+                        <div class="interest-tag" data-interest="alam">🌄 Alam</div>
+                        <div class="interest-tag" data-interest="belanja">🛍️ Belanja</div>
+                        <div class="interest-tag" data-interest="religi">🕌 Religi</div>
+                        <div class="interest-tag" data-interest="seni">🎨 Seni & Budaya</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Durasi (hari)</label>
+                    <input type="number" id="duration" value="3" min="1" max="14">
+                </div>
+
+                <div class="form-group">
+                    <label>Budget</label>
+                    <select id="budget">
+                        <option value="rendah">Rendah (Hemat)</option>
+                        <option value="menengah" selected>Menengah</option>
+                        <option value="tinggi">Tinggi (Premium)</option>
+                    </select>
+                </div>
+
+                <button id="generateBtn">Generate Rencana Perjalanan</button>
+
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="progress-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <p><span class="spinner"></span>🤖 AI sedang merencanakan perjalanan terbaik untuk Anda...</p>
+                </div>
+
+                <div id="results" class="results" style="display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Rencana Perjalanan</h3>
+                    <div id="destinationsList"></div>
+                    
+                    <div id="summaryRoute"></div>
+                </div>
+            </div>
+
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // Initialize map
+        let map = L.map('map').setView([-7.7956, 110.3695], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let markers = [];
+        let routePolyline = null;
+        let selectedInterests = new Set();
+
+        // Interest tags handler
+        document.querySelectorAll('.interest-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const interest = this.dataset.interest;
+                this.classList.toggle('active');
+                
+                if (selectedInterests.has(interest)) {
+                    selectedInterests.delete(interest);
+                } else {
+                    selectedInterests.add(interest);
+                }
+            });
+        });
+
+        // Category icons mapping
+        const categoryIcons = {
+            'sejarah': '🏛️',
+            'kuliner': '🍜',
+            'alam': '🌄',
+            'belanja': '🛍️',
+            'religi': '🕌',
+            'hiburan': '🎡',
+            'seni': '🎨'
+        };
+
+        // Create custom marker
+        function createCustomIcon(category, number) {
+            const icon = categoryIcons[category] || '📍';
+            return L.divIcon({
+                html: `<div style="background: white; border: 3px solid #667eea; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                    ${icon}
+                    <span style="position: absolute; top: -8px; right: -8px; background: #764ba2; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">${number}</span>
+                </div>`,
+                className: '',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20],
+                popupAnchor: [0, -20]
+            });
+        }
+
+        // Generate travel plan
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            const city = document.getElementById('city').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            const budget = document.getElementById('budget').value;
+
+            if (!city) {
+                alert('Mohon masukkan kota tujuan');
+                return;
+            }
+
+            if (selectedInterests.size === 0) {
+                alert('Mohon pilih minimal satu minat');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            this.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/plan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        city: city,
+                        interests: Array.from(selectedInterests),
+                        duration: duration,
+                        budget: budget
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate travel plan');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                this.disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            // Clear previous markers and route
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+            }
+
+            // Display destinations list
+            const listContainer = document.getElementById('destinationsList');
+            listContainer.innerHTML = '';
+
+            const coordinates = [];
+
+            data.destinations.forEach((dest, index) => {
+                // Add to list
+                const card = document.createElement('div');
+                card.className = 'destination-card';
+                card.innerHTML = `
+                    <h4>${index + 1}. ${dest.name}</h4>
+                    <p><span class="category-badge">${dest.category}</span> ${dest.estimated_duration}</p>
+                    <p>${dest.description}</p>
+                    <p><strong>💡 Tips:</strong> ${dest.tips}</p>
+                `;
+                listContainer.appendChild(card);
+
+                // Add marker to map
+                const marker = L.marker([dest.lat, dest.lon], {
+                    icon: createCustomIcon(dest.category, index + 1)
+                }).addTo(map);
+
+                const popupContent = `
+                    <div class="popup-title">${dest.name}</div>
+                    <div class="popup-description">
+                        <p><strong>${dest.category}</strong> - ${dest.estimated_duration}</p>
+                        <p>${dest.description}</p>
+                    </div>
+                `;
+                marker.bindPopup(popupContent);
+                markers.push(marker);
+                coordinates.push([dest.lat, dest.lon]);
+            });
+
+            // Display journey summary
+            const summaryContainer = document.getElementById('summaryRoute');
+            const categories = [...new Set(data.destinations.map(d => d.category))];
+            const totalDuration = data.destinations.reduce((sum, dest) => {
+                // Extract number from duration string (e.g., "2-3 jam" -> 2.5)
+                const match = dest.estimated_duration.match(/\d+/);
+                return sum + (match ? parseInt(match[0]) : 0);
+            }, 0);
+
+            summaryContainer.innerHTML = `
+                <div class="summary-route">
+                    <h4>📊 Ringkasan Perjalanan</h4>
+
+                    <div class="summary-item">
+                        <span><strong>📍 Total Destinasi:</strong></span>
+                        <span>${data.destinations.length} lokasi</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>⏱️ Estimasi Waktu:</strong></span>
+                        <span>~${data.estimated_time} jam</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>🎯 Kategori:</strong></span>
+                    </div>
+                    <div class="summary-categories">
+                        ${categories.map(cat => `<span class="summary-category-tag">${categoryIcons[cat] || '📍'} ${cat}</span>`).join('')}
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>🎯 Total Jarak:</strong></span>
+                        <span>${data.total_distance}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>💰 Pertimbangan Budget:</strong></span>
+                        <span>${data.budget_consideration}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span><strong>🚩 Lokasi Awal:</strong></span>
+                        <span>${data.start_location}</span>
+                    </div>
+                    <h5>🗺️ Rangkuman Rute Perjalanan:</h5>
+                    <p>${data.route_summary}</p>
+                </div>
+            `;
+
+            // Draw route
+            if (coordinates.length > 1) {
+                routePolyline = L.polyline(coordinates, {
+                    color: '#667eea',
+                    weight: 3,
+                    opacity: 0.7,
+                    dashArray: '10, 10'
+                }).addTo(map);
+            }
+
+            // Fit map to show all markers
+            const group = L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.1));
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+        
+    </script>
+</body>
+</html>
