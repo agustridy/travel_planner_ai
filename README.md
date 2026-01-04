@@ -1,7 +1,7 @@
 # 🤖 Travel Planner AI - FastAPI + LLM + Maps
 
 Aplikasi web cerdas untuk merencanakan perjalanan wisata secara otomatis menggunakan kecerdasan buatan dan integrasi peta interaktif.
-
+[![Tonton di YouTube](https://img.youtube.com/vi/kVp6oC8AxCA/0.jpg)](https://www.youtube.com/watch?v=kVp6oC8AxCA)
 ## 🎯 Fitur Utama
 
 - **AI-Powered Recommendations**: Generate rencana perjalanan otomatis menggunakan Deepseek LLM
